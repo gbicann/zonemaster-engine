@@ -1000,7 +1000,8 @@ An arrayref of names of custom test modules (eg C<My::Module>). If you have
 custom tests, this is how you load them. The module must be present somewhere
 in Perl's C<@INC> (see L<https://metacpan.org/pod/perlvar#@INC>) and must
 provide the same API as the builtin modules in the C<Zonemaster::Engine::Test::>
-namespace, such as C<version()>, C<all()>, C<metadata()>, etc.
+namespace, such as C<version()>, C<all()>, C<metadata()>, etc. You will also need
+to add test cases from this module to the C<test_cases> property.
 
 =head1 REPRESENTATIONS
 
