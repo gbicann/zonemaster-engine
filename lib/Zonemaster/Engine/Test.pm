@@ -27,8 +27,6 @@ use File::ShareDir qw[dist_file];
 use File::Slurp qw[read_file];
 use Scalar::Util qw[blessed];
 use POSIX qw[strftime];
-use Carp;
-use List::MoreUtils qw(any);
 
 =head1 NAME
 
