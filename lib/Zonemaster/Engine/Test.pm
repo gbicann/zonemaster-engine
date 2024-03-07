@@ -101,6 +101,13 @@ BEGIN {
         require sprintf q{Zonemaster/Engine/Test/%s.pm}, $name;
         "Zonemaster::Engine::Test::$name"->import();
     }
+
+    for my $name ( @{ Zonemaster::Engine::Profile->effective->get( q{custom_modules} ) } ) {
+        eval qq { require $name; };
+        $name->import();
+
+        push @all_test_modules, $name;
+    }
 }
 
 =head1 INTERNAL METHODS
@@ -138,60 +145,14 @@ sub _log_versions {
 
 =over
 
-=item install()
-
-    Zonemaster::Engine::Test->install_custom_test_module('My::Module');
-
-Installs a custom module outside of the C<Zonemaster::Engine::Test::> namespace.
-This module must be a modules that implements the same interface as the modules
-in that namespace (ie. C<version()> C<all()> etc).
-
-The effective profile will be updated to include all test cases from the custom
-module.
-
-=back
-
-=cut
-
-sub install_custom_test_module {
-    my ( $class, $module ) = @_;
-
-    $module->import();
-
-    # get list of cases to be added
-    my @cases = keys( %{$module->metadata} );
-
-    my $profile = Zonemaster::Engine::Profile->effective;
-
-    # check there isn't a collission between one of the new cases and an
-    # existing case
-    foreach my $case ( @cases ) {
-        if ( any { $_ eq $case } @{$profile->{profile}->{test_cases}} ) {
-            carp sprintf "case '%s' already exists", $case ;
-            return undef;
-        }
-    }
-
-    # add the module
-    push @all_test_modules, $module;
-
-    # append cases to the profile
-    push @{$profile->{profile}->{test_cases}}, @cases;
-
-    return 1;
-}
-
-=pod
-
-=over
-
 =item modules()
 
     my @modules_array = modules();
 
 Returns a list of strings containing the names of all available Test modules, with the
 exception of L<Zonemaster::Engine::Test::Basic> (since that one is a bit special),
-based on the content of the B<share/modules.txt> file.
+based on the content of the B<share/modules.txt> file and any custom modules
+defined in the L<profile|Zonemaster::Engine::Profile/custom_modules>.
 
 =back
 

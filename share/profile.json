@@ -594,5 +594,7 @@
         "zone09",
         "zone10",
         "zone11"
+    ],
+    "custom_modules": [
     ]
 }

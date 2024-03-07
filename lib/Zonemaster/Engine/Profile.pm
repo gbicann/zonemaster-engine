@@ -213,6 +213,15 @@ my %profile_properties_details = (
         type    => q{Num},
         min     => 1,
         default => $DURATION_5_MINUTES_IN_SECONDS
+    },
+    q{custom_modules} => {
+        type    => q{ArrayRef},
+        test    => sub {
+            foreach my $name ( @{ $_[0] }) {
+                die "Property custom_modules contains an invalid value '$name'" unless ( $name =~ /^[A-Z]+(::[A-Z]+)*$/i );
+            }
+        },
+        default => [],
     }
 );
 
@@ -984,6 +993,14 @@ L<ZONE06|
 https://github.com/zonemaster/zonemaster/blob/master/docs/specifications/tests/Zone-TP/zone06.md>.
 Related to the SOA_DEFAULT_TTL_MAXIMUM_VALUE_HIGHER message tag from this test case.
 Default C<86400> (1 day in seconds).
+
+=head2 custom_modules
+
+An arrayref of names of custom test modules (eg C<My::Module>). If you have
+custom tests, this is how you load them. The module must be present somewhere
+in Perl's C<@INC> (see L<https://metacpan.org/pod/perlvar#@INC>) and must
+provide the same API as the builtin modules in the C<Zonemaster::Engine::Test::>
+namespace, such as C<version()>, C<all()>, C<metadata()>, etc.
 
 =head1 REPRESENTATIONS
 
