@@ -1,4 +1,4 @@
-package My::Module;
+package Custom::Module;
 use strict;
 use vars qw($VERSION %TAG_DESCRIPTIONS);
 use Zonemaster::Engine::Util;

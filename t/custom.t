@@ -4,25 +4,28 @@ use File::Spec;
 use File::Basename qw(dirname);
 use Test::More;
 use strict;
+use vars qw($module);
 use warnings;
 
 BEGIN {
+    use_ok( q{Zonemaster::Engine::Profile} );
+
+    $module = q{Custom::Module};
+
+    push @INC, abs_path( File::Spec->catfile( dirname( __FILE__ ), q{custom}, q{lib} ) );
+
+    my $modules = Zonemaster::Engine::Profile->effective->get( q{custom_modules} );
+    push @{ $modules }, $module;
+
+    Zonemaster::Engine::Profile->effective->set( q{custom_modules}, $modules );
+
+    my $cases = Zonemaster::Engine::Profile->effective->get( q{test_cases} );
+    push @{ $cases }, q{test01};
+
+    Zonemaster::Engine::Profile->effective->set( q{test_cases}, $cases );
+
     use_ok( q{Zonemaster::Engine} );
-    use_ok( q{Zonemaster::Engine::Nameserver} );
 }
-
-my $module  = 'My::Module';
-
-my $modfile = abs_path( File::Spec->catfile(
-    dirname( __FILE__ ),
-    'custom.module'
-) );
-
-require_ok $modfile;
-
-$module->import();
-
-Zonemaster::Engine::Test->install_custom_test_module( $module );
 
 ok any { $_ eq $module } Zonemaster::Engine::Test->modules();
 
